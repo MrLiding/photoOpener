@@ -48,7 +48,7 @@ export const Home = ({ id, fetchedUser }) => {
   };
 
   const image_open = async () => {
-    if (link.includes(".jpg") || link.includes(".jpeg") || link.includes(".webp"))
+    if (link.includes(".jpg") || link.includes(".jpeg") || link.includes(".webp") || link.includes(".png"))
     {
       setLoading(true)
       bridge.send('VKWebAppShowImages',{
@@ -75,7 +75,7 @@ export const Home = ({ id, fetchedUser }) => {
   }
 
   const image_share = async () => {
-    if (link.includes(".jpg") || link.includes(".jpeg") || link.includes(".webp"))
+    if (link.includes(".jpg") || link.includes(".jpeg") || link.includes(".webp") || link.includes(".png"))
     {
       bridge.send('VKWebAppShowWallPostBox', {
         message: 'Смотри, какая классная фотка!',
@@ -105,7 +105,7 @@ export const Home = ({ id, fetchedUser }) => {
           </Div>
             <FormItem
               htmlFor="link"
-              top="Ссылка на фото (.jpg/.jpeg/.webp)"
+              top="Ссылка на фото (.jpg/.jpeg/.webp/.png)"
               status={link ? 'valid' : 'error'}
               bottom={
                 link ? '' : 'Пожалуйста, введите ссылку'
