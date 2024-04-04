@@ -47,14 +47,27 @@ export const Home = ({ id, fetchedUser }) => {
     );
   };
 
+  const countError = () => {
+    if (snackbar) return;
+    setSnackbar(
+      <Snackbar
+        onClose={() => setSnackbar(null)}
+        before={<Icon28ErrorCircleOutline fill="var(--vkui--color_icon_negative)" />}
+      >
+        Слишком много фотографий
+      </Snackbar>,
+    );
+  };
+
   const image_open = async () => {
     if (link.includes(".jpg") || link.includes(".jpeg") || link.includes(".webp") || link.includes(".png"))
     {
-      setLoading(true)
+      let linkMassive = [];
+      linkMassive = link.split(", ").concat(linkMassive)
+      if (linkMassive.length < 11){
+        setLoading(true)
       bridge.send('VKWebAppShowImages',{
-      images: [
-        link
-      ]
+      images: linkMassive
       })
       .then((data) => { 
         if (data.result) {
@@ -68,6 +81,10 @@ export const Home = ({ id, fetchedUser }) => {
         console.log(error);
         setLoading(false)
       });
+      }
+      else {
+        countError();
+      }
     }
     else {
       openError();
@@ -77,20 +94,27 @@ export const Home = ({ id, fetchedUser }) => {
   const image_share = async () => {
     if (link.includes(".jpg") || link.includes(".jpeg") || link.includes(".webp") || link.includes(".png"))
     {
-      bridge.send('VKWebAppShowWallPostBox', {
-        message: 'Смотри, какая классная фотка!',
-        attachments: link
-        })
-        .then((data) => { 
-          if (data.post_id) {
-            // Запись размещена
-          }
-        })
-        .catch((error) => {
-          // Ошибка
-          openErrorShare();
-          console.log(error);
-        });
+      let linkMassive = [];
+      linkMassive = link.split(", ").concat(linkMassive)
+      if (linkMassive.length < 11){
+        bridge.send('VKWebAppShowWallPostBox', {
+          message: 'Смотри, какая классная фотка!',
+          attachments: linkMassive
+          })
+          .then((data) => { 
+            if (data.post_id) {
+              // Запись размещена
+            }
+          })
+          .catch((error) => {
+            // Ошибка
+            openErrorShare();
+            console.log(error);
+          });
+      }
+      else {
+        countError();
+      }
     }
     else {
       openErrorShare();
@@ -105,7 +129,7 @@ export const Home = ({ id, fetchedUser }) => {
           </Div>
             <FormItem
               htmlFor="link"
-              top="Ссылка на фото (.jpg/.jpeg/.webp/.png)"
+              top="Ссылка на фото (.jpg/.jpeg/.webp/.png, максимум 10 шт. через ', ')"
               status={link ? 'valid' : 'error'}
               bottom={
                 link ? '' : 'Пожалуйста, введите ссылку'
